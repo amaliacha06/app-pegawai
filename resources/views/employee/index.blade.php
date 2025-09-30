@@ -23,7 +23,7 @@
             <tbody>
                 @foreach($employees as $employee)
                     <tr>
-                        <t2ed>{{ $employee->nama_lengkap }}</t2ed>
+                        <td>{{ $employee->nama_lengkap }}</td>
                         <td>{{ $employee->email }}</td>
                         <td>{{ $employee->nomor_telepon }}</td>
                         <td>{{ $employee->tanggal_lahir }}</td>
@@ -45,3 +45,6 @@
             </tbody>
         </table>
     </div>
+</body>
+
+</html>

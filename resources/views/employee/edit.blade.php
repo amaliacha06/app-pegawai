@@ -48,6 +48,6 @@
             <td colspan="2">
                 <button type="submit">Update</button>
             </td>
-        </tr>
+        </tr> 
     </table>
 </form>
