@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController; //impor Controller
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\SalariesController;
-use App\Models\Department;
+use App\Http\Controllers\PerformanceReviewController;
+use App\Http\Controllers\SettingController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,3 +18,6 @@ Route::resource('departments', DepartemensController::class);
 Route::resource('positions', PositionController::class);
 Route::resource('attendance', AttendanceController::class);
 Route::resource('salaries', SalariesController::class);
+Route::resource('performance-reviews', PerformanceReviewController::class);
+Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+Route::post('settings', [SettingController::class, 'update'])->name('settings.update');

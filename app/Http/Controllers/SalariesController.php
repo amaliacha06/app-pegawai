@@ -12,11 +12,27 @@ class SalariesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+     public function index(Request $request) // Terima objek Request
     {
-        $salaries = Salaries::with('employee')->latest()->paginate(15);
+        // 1. Ambil input pencarian dari URL (dari input name="search")
+        $search = $request->input('search');
+
+        // Mulai dari semua data absensi dan langsung muat data karyawan (Eager Loading)
+        $salariesQuery = Salaries::query()->with('employee')->latest();
+
+        // 3. Cek apakah ada kata kunci pencarian
+        if ($search) {
+            // Gunakan whereHas untuk memfilter absensi berdasarkan kolom di tabel employee
+            $salariesQuery->whereHas('employee', function ($query) use ($search) {
+                $query->where('nama_lengkap', 'like', '%' . $search . '%')
+                      ->orWhere('bulan', 'like', '%' . $search . '%')
+                      ->orWhere('gaji_pokok', 'like', '%' . $search . '%');
+            });
+        }
+        $salaries = $salariesQuery->paginate(7);
         return view('salaries.index', compact('salaries'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -68,7 +84,8 @@ class SalariesController extends Controller
 
         Salaries::create($data);
 
-        return redirect()->route('salaries.index');
+        return redirect()->route('salaries.index')
+                ->with('success', 'Data Gaji berhasil diTambahkan!');
     }
 
     /**
@@ -130,7 +147,8 @@ class SalariesController extends Controller
 
         $salary->update($data);
 
-        return redirect()->route('salaries.index');
+        return redirect()->route('salaries.index')
+                ->with('success', 'Data Gaji berhasil diperbarui!');
     }
 
     /**
@@ -140,6 +158,8 @@ class SalariesController extends Controller
     {
         $salary = Salaries::findOrFail($id);
         $salary->delete();
-        return redirect()->route('salaries.index');
+
+        return redirect()->route('salaries.index')
+            ->with('success', ' Data Gaji berhasil diHapus!');
     }
 }

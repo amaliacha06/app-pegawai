@@ -16,6 +16,7 @@ class Employee extends Model
         'jabatan_id',
     ];
 
+
     public function department()
     {
         return $this->belongsTo(Department::class, 'departemen_id');
@@ -23,6 +24,6 @@ class Employee extends Model
     
     public function position()
     {
-        return $this->belongsTo(Position::class, 'jabatan_id');
+        return $this->belongsTo(Position::class, 'jabatan_id'); //Foreign Key jabatan_id.
     }
 }

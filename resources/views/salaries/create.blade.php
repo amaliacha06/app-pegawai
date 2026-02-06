@@ -11,7 +11,7 @@
                     @csrf
 
                     <div class="mb-3">
-                        <label for="karyawan_id" class="form-label">Karyawan</label>
+                        <label for="karyawan_id" class="form-label">Nama Lengkap</label>
                         <select id="karyawan_id" name="karyawan_id" class="form-select @error('karyawan_id') is-invalid @enderror">
                             <option value="">-- Pilih Karyawan --</option>
                             @foreach($employees as $emp)
@@ -22,10 +22,13 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="bulan" class="form-label">Bulan</label>
-                        <input type="text" id="bulan" name="bulan" value="{{ old('bulan') }}" class="form-control @error('bulan') is-invalid @enderror">
-                        @error('bulan')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
+                            <label for="bulan" class="form-label fw-bold">Periode</label>
+                            <input type="text" name="bulan" id="bulan" value="{{ old('bulan') }}"
+                                class="form-control @error('bulan') is-invalid @enderror" placeholder="ex: November">
+                            @error('bulan')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
                     <div class="mb-3">
                         <label for="gaji_pokok" class="form-label">Gaji Pokok</label>

@@ -4,8 +4,21 @@
 @section('content')
 
     <div class="mb-3 mt-3 d-flex justify-content-between align-items-center">
-        <h3 class="fw-semibold mb-0">Laporan Gaji Pegawai</h3>
-        <a href="{{ route('salaries.create') }}" class="btn btn-primary"> + Tambah Daftar Gaji</a>
+        <h3 class="fw-semibold mb-0">Daftar Gaji</h3>
+        <a href="{{ route('salaries.create') }}" class="btn btn-primary">+ Tambah Daftar Gaji</a>
+    </div>
+
+    <div class="mb-3">
+        <form action="{{ route('salaries.index') }}" method="GET">
+            <div class="input-group" style="width: 240px;">
+                <input type="text" name="search" class="form-control" placeholder="Search" value="{{ request('search') }}">
+                <button type="submit" style="display: none;"></button>
+
+                @if(request('search'))
+                    <a href="{{ route('salaries.index') }}" class="btn btn-outline-danger" title="Hapus Filter">❌</a>
+                @endif
+            </div>
+        </form>
     </div>
 
     <div class="card">
@@ -34,11 +47,13 @@
                             <td style="white-space:nowrap;">
                                 <a href="{{ route('salaries.show', $s->id) }}" class="btn btn-sm btn-info">Detail</a>
                                 <a href="{{ route('salaries.edit', $s->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="{{ route('salaries.destroy', $s->id) }}" method="POST" class="d-inline">
+                                <form id="delete-form-{{ $s->id }}" 
+                                    action="{{ route('salaries.destroy', $s->id) }}" method="POST" class="d-inline"> 
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Delete</button>
-                                </form>
+                                    <button type="submit" class="btn btn-sm btn-danger" 
+                                            onclick="confirmDelete(event, {{ $s->id }})">Delete</button>
+                            </form>
                             </td>
                         </tr>
                     @endforeach
@@ -47,7 +62,9 @@
         </div>
     </div>
 
-    <div class="mt-3">
-        {{ $salaries->links() }}
+    <div class=" d-flex justify-content-end mt-3">
+        {{-- Pastikan ini menggunakan withQueryString() untuk mempertahankan filter search --}}
+        {{ $salaries->withQueryString()->links() }}
     </div>
+
 @endsection

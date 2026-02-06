@@ -15,6 +15,6 @@ class Position extends Model
 
     public function employees()
     {
-        return $this->hasMany(Employee::class, 'jabatan_id');
+        return $this->hasMany(Employee::class, 'jabatan_id');//Satu jabatan (Position) bisa memiliki banyak karyawan (Employee).
     }
 }

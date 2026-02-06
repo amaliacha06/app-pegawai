@@ -13,9 +13,26 @@ class AttendanceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+      public function index(Request $request) // Terima objek Request
     {
-        $attendances = Attendance::with('employee')->latest()->paginate(15);
+        // 1. Ambil input pencarian dari URL (dari input name="search")
+        $search = $request->input('search');
+
+        // Mulai dari semua data absensi dan langsung muat data karyawan (Eager Loading)
+        $attendanceQuery = Attendance::query()->with('employee')->latest();
+
+        // 3. Cek apakah ada kata kunci pencarian
+        if ($search) {
+            // Gunakan whereHas untuk memfilter absensi berdasarkan kolom di tabel employee
+            $attendanceQuery->whereHas('employee', function ($query) use ($search) {
+                $query->where('nama_lengkap', 'like', '%' . $search . '%')
+                      ->orWhere('tanggal', 'like', '%' . $search . '%')
+                      ->orWhere('waktu_masuk', 'like', '%' . $search . '%')
+                      ->orWhere('waktu_keluar', 'like', '%' . $search . '%')
+                      ->orWhere('status_absensi', 'like', '%' . $search . '%');
+            });
+        }
+        $attendances = $attendanceQuery->paginate(7);
         return view('attendance.index', compact('attendances'));
     }
 
@@ -46,7 +63,8 @@ class AttendanceController extends Controller
         // Update salary total when attendance indicates presence
         $this->applyAttendanceToSalary($attendance);
 
-        return redirect()->route('attendance.index');
+        return redirect()->route('attendance.index')
+                ->with('success', 'Data Absensi berhasil ditambahkan!');
     }
 
     /**
@@ -91,7 +109,8 @@ class AttendanceController extends Controller
         // Apply salary adjustment based on the delta between old and new attendance
         $this->applyAttendanceToSalary($attendance, $oldStatus, $oldTanggal);
 
-        return redirect()->route('attendance.index');
+        return redirect()->route('attendance.index')
+                ->with('success', 'Data Absensi berhasil diperbarui!');
     }
 
     /**
@@ -218,6 +237,8 @@ class AttendanceController extends Controller
             }
         }
         $attendance->delete();
-        return redirect()->route('attendance.index');
+        
+        return redirect()->route('attendance.index')
+            ->with('success', 'Data Absensi berhasil diHapus!');
     }
 }

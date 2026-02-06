@@ -11,9 +11,29 @@ class PositionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+     public function index(Request $request) // Terima objek Request
     {
-        $positions = Position::latest()->paginate(10);
+        // 1. Ambil input pencarian dari URL (dari input name="search")
+        $search = $request->input('search');
+
+        // 2. Mulai query dasar (latest() untuk urutan terbaru)
+        $positionsQuery = Position::latest();
+
+        // 3. Cek apakah ada kata kunci pencarian
+        if ($search) {
+            // Jika ada, tambahkan kondisi WHERE
+            // Mencari di kolom nama_lengkap, email, alamat, dan nomor_telepon
+            $positionsQuery->where(function ($query) use ($search) {
+                $query->where('nama_jabatan', 'like', '%' . $search . '%')
+                      ->orWhere('gaji_pokok', 'like', '%' . $search . '%');
+            });
+        }
+        // 4. Terapkan pagination ke query yang sudah difilter
+        // Data yang difilter atau semua data akan di-paginate
+        $positions = $positionsQuery->paginate(7);
+
+        // 5. Kirim data ke view
         return view('position.index', compact('positions'));
     }
 
@@ -37,7 +57,8 @@ class PositionController extends Controller
 
         Position::create($request->only(['nama_jabatan', 'gaji_pokok']));
 
-        return redirect()->route('positions.index');
+        return redirect()->route('positions.index')
+                ->with('success', ' Jabatan berhasil diTambahkan!');
     }
 
     /**
@@ -45,6 +66,7 @@ class PositionController extends Controller
      */
     public function show(string $id)
     {
+        // Mengambil satu data Jabatan berdasarkan ID.
         $position = Position::findOrFail($id);
         return view('position.show', compact('position'));
     }
@@ -70,8 +92,9 @@ class PositionController extends Controller
 
         $position = Position::findOrFail($id);
         $position->update($request->only(['nama_jabatan', 'gaji_pokok']));
-
-        return redirect()->route('positions.index');
+    
+        return redirect()->route('positions.index')
+             ->with('success', 'Jabatan berhasil diperbarui!');
     }
 
     /**
@@ -81,6 +104,8 @@ class PositionController extends Controller
     {
         $position = Position::findOrFail($id);
         $position->delete();
-        return redirect()->route('positions.index');
+
+        return redirect()->route('positions.index')
+                ->with('success', 'Jabatan berhasil diHapus!');
     }
 }

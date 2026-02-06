@@ -96,7 +96,7 @@
                         <div class="col-sm-9">
                             <select id="status" name="status" class="form-select @error('status') is-invalid @enderror">
                                 <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                <option value="nonaktif" {{ old('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                                <option value="nonaktif" {{ old('status') == 'nonaktif' ? 'selected' : '' }}>nonaktif</option>
                             </select>
                             @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
